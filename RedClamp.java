@@ -25,33 +25,39 @@ public class RedClamp extends LinearOpMode{
         //scores preload
         Action preload = drive.actionBuilder(startPose)
                 .strafeTo(new Vector2d(10,-36))
+                .waitSeconds(2)
                 .build();
 
         //grabs from ground
         Action grab2 = drive.actionBuilder(new Pose2d(10, -36, Math.toRadians(90)))
                 .lineToY(-45)
                 .strafeToLinearHeading(new Vector2d(48,-38), Math.toRadians(270))
+                .waitSeconds(1)
                 .build();
 
         //give to human and pick up other from human
         Action pickup2 = drive.actionBuilder(new Pose2d(48, -38, Math.toRadians(270)))
                 .strafeTo(new Vector2d(48,-48))
                 .turn(Math.toRadians(180))
+                .waitSeconds(3)
                 .build();
 
         //score2
         Action score2 = drive.actionBuilder(new Pose2d(48, -48, Math.toRadians(180)))
                 .strafeTo(new Vector2d(5,-36))
+                .waitSeconds(2)
                 .build();
 
         //picks from human
         Action pickup3 = drive.actionBuilder(new Pose2d(5, -36, Math.toRadians(180)))
                 .strafeTo(new Vector2d(48,-48))
+                .waitSeconds(1.5)
                 .build();
 
         //score3
         Action score3 = drive.actionBuilder(new Pose2d(48, -48, Math.toRadians(180)))
                 .strafeTo(new Vector2d(0,-36))
+                .waitSeconds(2)
                 .build();
 
         //park
