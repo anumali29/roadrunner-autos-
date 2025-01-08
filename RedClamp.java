@@ -21,8 +21,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.monkeyballs.Drivetrain;
 import org.firstinspires.ftc.teamcode.monkeyballs.Mechanisms;
 
-@Config
-@Autonomous(name = "RED-CLAMP", group = "Autonomous")
+@Autonomous
 public class RedClamp extends LinearOpMode{
 
     @Override
