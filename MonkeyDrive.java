@@ -97,7 +97,6 @@ public class MonkeyDrive extends LinearOpMode {
 
             if(gamepad2.y){
                 mech.clawClose();
-                //hi
             }
 
             if(gamepad2.right_trigger > 0.5){
