@@ -28,34 +28,34 @@ public class BlueClamp extends LinearOpMode{
                 .build();
 
         //grabs from ground
-        Action grab2 = drive.actionBuilder(new Pose2d(10, -36, Math.toRadians(90)))
+        Action grab2 = drive.actionBuilder(new Pose2d(-15, 64, Math.toRadians(270)))
                 .lineToY(45)
                 .strafeToLinearHeading(new Vector2d(-48,38), Math.toRadians(90))
                 .build();
 
         //give to human and pick up other from human
-        Action pickup2 = drive.actionBuilder(new Pose2d(48, -38, Math.toRadians(270)))
+        Action pickup2 = drive.actionBuilder(new Pose2d(-48, 38, Math.toRadians(90)))
                 .strafeTo(new Vector2d(-48,48))
                 .turn(Math.toRadians(180))
                 .build();
 
         //score2
-        Action score2 = drive.actionBuilder(new Pose2d(48, -48, Math.toRadians(180)))
+        Action score2 = drive.actionBuilder(new Pose2d(-48, 48, Math.toRadians(180)))
                 .strafeTo(new Vector2d(-5,36))
                 .build();
 
         //picks from human
-        Action pickup3 = drive.actionBuilder(new Pose2d(5, -36, Math.toRadians(180)))
+        Action pickup3 = drive.actionBuilder(new Pose2d(-5, 36, Math.toRadians(180)))
                 .strafeTo(new Vector2d(-48,48))
                 .build();
 
         //score3
-        Action score3 = drive.actionBuilder(new Pose2d(48, -48, Math.toRadians(180)))
+        Action score3 = drive.actionBuilder(new Pose2d(-48, 48, Math.toRadians(180)))
                 .strafeTo(new Vector2d(0,36))
                 .build();
 
         //park
-        Action park = drive.actionBuilder(new Pose2d(42, -58, Math.toRadians(180)))
+        Action park = drive.actionBuilder(new Pose2d(0, 36, Math.toRadians(180)))
                 .strafeTo(new Vector2d(-42,58))
                 .build();
 

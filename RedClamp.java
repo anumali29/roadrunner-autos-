@@ -55,7 +55,7 @@ public class RedClamp extends LinearOpMode{
                 .build();
 
         //park
-        Action park = drive.actionBuilder(new Pose2d(42, -58, Math.toRadians(180)))
+        Action park = drive.actionBuilder(new Pose2d(0, -36, Math.toRadians(180)))
                 .strafeTo(new Vector2d(42,-58))
                 .build();
 
