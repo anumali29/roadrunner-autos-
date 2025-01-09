@@ -12,84 +12,93 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Autonomous
 public class BlueBucket extends LinearOpMode {
-    private DcMotor liftMotor;
-    private Servo armServo;
+    private DcMotor leftSlide;
+    private DcMotor rightSlide;
+    private Servo armLeft;
+    private Servo armRight;
     private Servo clawRotationServo;
-    private Servo claw1;
-    private Servo claw2;
+    private Servo clawControl;
+    private Servo claw;
     
     @Override
     public void runOpMode() {
         Pose2d startPose = new Pose2d(15, 64, Math.toRadians(270));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
         Mechanisms mech = new Mechanisms(this, hardwareMap);
-        liftMotor = hardwareMap.get(DcMotor.class, "liftMotor");
-        armServo = hardwareMap.get(Servo.class, "armServo");
-        clawRotationServo = hardwareMap.get(Servo.class "clawRotation");
-         claw1 = hardwareMap.get(Servo.class, "claw1");
-        claw2 = hardwareMap.get(Servo.class, "claw2");
-        
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        waitForStart();
-        if (isStopRequested()) return;
+        leftSlide = hardwareMap.get(DcMotor.class, "leftSlide");
+        rightSlide = hardwareMap.get(DcMotor.class, "rightSlide");
+        armLeft = hardwareMap.get(Servo.class, "armLeft");
+        armRight = hardwareMap.get(Servo.class, "armRight");
+        clawRotationServo = hardwareMap.get(Servo.class, "clawRotation");
+        clawControl = hardwareMap.get(Servo.class, "clawControl"
+        claw = hardwareMap.get(Servo.class, "claw");
+    
         // Actions
-
-        Action moveToLiftPosition(int position){
-            return new Action(){
-
-            private boolean initialized = false;
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet){
-                if(!initialized){
-
-                    liftMotor.setTargetPosition(position);
-                    liftMotor.setPower(0.7);
-                    initialized = true;
-                }
-                    packet.put("Lift Position", liftMotor.getCurrentPosition());
-                    return liftMotor.isBusy();
-                
+Action moveArm(double armPosition1, double armoPosition2){
+    return new Action(){
+        private boolean initialized = false;
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet){
+            if (!initialized){
+                armLeft.setPosition(armPosition1);
+                armRight.setPosition(armPosition2);
+                initialized = true;
             }
-       };
-  }
-        Action moveArmAndClaw(double armPosition, double clawRotationPosition) {
+            packet.put("Arm Left Position", armLeft.getPosition());
+            packet.put("Arm Right Position", armRight.getPosition());
+            return false;
+        }
+    };
+}
+        Action rotateClaw(double clawRotationPosition){
             return new Action(){
                 private boolean initialized = false;
                 @Override
-                public bollean run(@NonNull TelemetryPacket packet){
-                    if(!initialized) { 
-                        armServo.setPosition(armPosition);
+                public boolean run(@NonNull TelemetryPacket packet){
+                    if (!initialized){
                         clawRotationServo.setPosition(clawRotationPosition);
                         initialized = true;
                     }
-                    packet.put("Arm Position", armServo.getPosition());
                     packet.put("Claw Rotation Position", clawRotationServo.getPosition());
                     return false;
                 }
                 
             };
+            
+        }
+
+        Action setClawControl(double position) {
+            return new Action(){
+                private boolean initialized = false;
+                @Override
+                public boolean run(@NonNull TelemetryPacket packet){
+                    if (!initialized) {
+                        clawControl.sestPosition(position);
+                        initialized = true;
+                    }
+                    packet.put("Claw Control Position", clawControl.getPosition());
+                    return false;
+                }
+            };
+            
+        }
+
+        Action set ClawPosition(double position){
+            return new Action(){
+                private boolean initialized = false;
+                @Override
+                public boolean run(@NonNull TelemetryPacket packet){
+                    if (!initialized) {
+                        claw.setPosition(position);
+                        initialized = true;
+                    }
+            
+                    packet.put("Claw Position", claw.getPosition());
+                    return false;
+                }
+            };
 
         }
-    Action setClawPosition(double position1, double position2){
-        return new Action(){
-            private boolean initialized = false;
-            @Overrode
-            public boolean run(@NonNull TelemetryPacket packet){
-                if (!initialized){
-                    claw1.setPosition(position1);
-                    claw2.setPosition(position2);
-                    initialized = true;
-                }
-                packet.put("Claw1 Position", claw1.getPosition());
-                packet.put("Claw2 Position", claw2.getPosition());
-                return false;
-            }
-            
-        };
-    
-    }
         //scores preload
         Action preload = drive.actionBuilder(startPose)
                 .splineToLinearHeading(new Pose2d(54,54, Math.toRadians(45)), Math.toRadians(0)) //score preload
@@ -139,11 +148,11 @@ public class BlueBucket extends LinearOpMode {
                 new SequentialAction(
                         preload,
                         moveToLiftPosition(-2000),
-                        moveArmAndClaw(0.5, 0.3),
+                        moveArmAndClaw(0.5, 0.5, 0.3),
                         setClawPosition(0.65 ,0.35), //Open claw to release preloaded sample
                         grab2,
                         moveToLiftPosition(-350)
-                        setClawPosition(0.4, 0.2
+                        setClawPosition(0.4, 0.2),
                         score2,
                         moveToLiftPosition(-2000),
                         setClawPosition(0.0, 0.8), // Open claw to release
