@@ -172,14 +172,14 @@ public class Mechanisms {
         b = claw.getPosition();
     }
 
-    public void spinToRight(){
+    public void spinToRight(){ //scoring value is 0.95
         double b = clawRotation.getPosition();
         b += 0.002;
         clawRotation.setPosition(b);
         b = clawRotation.getPosition();
     }
 
-    public void spinToLeft(){
+    public void spinToLeft(){ //pickup value is 0.25
         double b = clawRotation.getPosition();
         b -= 0.002;
         clawRotation.setPosition(b);
