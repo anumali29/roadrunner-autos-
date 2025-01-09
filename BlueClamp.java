@@ -15,13 +15,109 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 @Autonomous
 public class BlueClamp extends LinearOpMode{
+    public class Lift(){
+        public DcMotor leftSlide;
+        public DcMotor rightSlide;
 
+        public Lift(){
+        leftSlide = hardwareMap.get(DcMotor.class, "leftSlide"
+        rightSlide = hardwareMap.get(DcMotor.class, "rightSlide");
+        leftSlide.setTargetPosition(0);
+        rightSlide.setTargetPositon(0);
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+
+        public class MoveSlide implements Action {
+            private int targetPosition;
+            private boolean initialized = false;
+            public MoveSlide(int targetPosition){
+                this.targetPosition = targetPosition;
+            }
+
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) { 
+                if (!initialized) {
+
+                    leftSlide.setTargetPosition(targetPosition);
+                    rightSlide.setTargetPosition(targetPosition);
+                    leftSlide.setPower(0.7);
+                    rightSlide.setPower(0.7);
+                    initialized = true;
+                }
+                packet.put("Slide Height", leftSlide.getCurrentPosition());
+                return leftSlide.isBusy() || rightSlide.isBusy();
+            }
+        }
+        public Action slideTo(int position) { 
+            return new MoveSlide(position);
+        }
+        
+    }
+
+    private Servo clawControl;
+    private Servo clawRotaion;
+    private Servo claw;
+    
     @Override
     public void runOpMode() {
         Pose2d startPose = new Pose2d(-15, 64, Math.toRadians(270));
         MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
         Mechanisms mech = new Mechanisms(this, hardwareMap);
+        Lift lift = new Lift();
+        clawControl = hardwareMap.get(Servo.class, "clawControl");
+        clawRotation = hardwareMap.get(Servo.class, "clawRotation");
+        claw = hardwareMap.get(Servo.class, "claw");
+    
+        waitForStart();
+        if (isStopRequested()) return;
 
+        //Actions
+
+        Action moveToLifePositiob(int position){
+            return life.slideTo(Position);
+        }
+
+        Action moveClaw(double clawControlPosition, double clawRotationPosition){
+            return new ACtion() {
+                private boolean initialized = false;
+                @Override
+                public boolean run(@NonNull TelemetryPacket packet) {
+                    if(!initialized){
+                        clawControl.setPosition(clawControlPosition);
+                        clawRotation.setPosition(clawRotationPosition);
+                        initialized = true;
+                        
+                    }
+                    packet.put("Claw Control Position", clawControl.getPosition());
+                    packet.put("Claw Rotation Position", clawRotation.getPosition())
+                    return false;
+                }
+            };
+        }
+
+    Action setClawPosition(double position) {
+        return new Action(){
+            private boolean initialized = false; 
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                if (!initialized){
+                    claw.setPosition(position);
+                    initialzied = true;
+                }
+                packet.put("Claw Position", claw.getPosition());
+                return false;
+                
+            }
+            
+        };
+        
+    }
+        
         //scores preload
         Action preload = drive.actionBuilder(startPose)
                 .strafeTo(new Vector2d(-10,36))
@@ -72,18 +168,32 @@ public class BlueClamp extends LinearOpMode{
                 new SequentialAction(
                         preload,
                         //score it
+                        moveToLiftPosition(-2000),
+                        moveClaw(0.65, 0.3),
                         grab2,
                         //grab sample
+                        moveToLiftPosition(-350),
+                        moveClaw(0.4, 0.2
                         pickup2,
                         //give to human player
+                        moveToLiftPosition(-2000),         
                         //pickup specimen from human player
+                        setClawPosition(0.8)
                         score2,
                         //score it
+                        moveClaw(0.0, 0.8), // Open claw to release
                         pickup3,
                         //pickup specimen from human player
+                        setClawPosition(0.8), // Close claw to pick up
+                        moveToLiftPosition(-2000),
                         score3,
                         //score it
+                        moveClaw(0.0, 0.8), // Open claw to release
                         park
+                        () -> {
+                        telemetry.addData("Status", "Parked");
+                        telemetry.update();
+                        }
                 )
         );
 
